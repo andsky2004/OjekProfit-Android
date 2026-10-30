@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#059669">
+  <title>OjekProfit — Rekap Pendapatan Driver</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-icon">🏍</span>
+      <div><h1>OjekProfit</h1><p>Hitung bersih & rekap driver</p></div>
+    </div>
+    <button id="themeToggleBtn" class="icon-btn" aria-label="Ganti tema"><span id="themeIcon">☾</span></button>
+  </header>
+
+  <main class="container">
+    <section class="stats-grid">
+      <article class="stat-card"><p>Bersih Hari Ini</p><h2 id="statTodayNet">Rp 0</h2><small id="statTodayGross">Kotor: Rp 0</small></article>
+      <article class="stat-card"><p>Bensin & Biaya</p><h2 id="statTodayExp" class="negative">Rp 0</h2><small>Termasuk potongan aplikasi</small></article>
+      <article class="stat-card"><p>Tabungan Servis</p><h2 id="statTodayMaint" class="warning">Rp 0</h2><small id="maintPercentLabel">(5% alokasi)</small></article>
+      <article class="stat-card"><p>Bersih Bulan Ini</p><h2 id="statMonthNet" class="blue">Rp 0</h2><small id="statTripCount">0 order</small></article>
+    </section>
+
+    <section class="panel target-panel">
+      <div class="target-heading"><span>◎ Target Bersih Harian</span><strong id="targetProgressText">0% (Rp 0 / Rp 150.000)</strong></div>
+      <div class="progress-track"><div id="targetProgressBar" class="progress-bar"></div></div>
+    </section>
+
+    <div class="content-grid">
+      <section class="panel form-panel">
+        <div class="section-heading">
+          <h2>✎ Input Pendapatan</h2>
+          <button id="openSettingsBtn" class="text-btn">⚙ Pengaturan</button>
+        </div>
+        <form id="entryForm">
+          <label for="inputDate">Tanggal</label>
+          <input type="date" id="inputDate" required>
+
+          <div class="two-col">
+            <div><label for="inputPlatform">Aplikasi / Platform</label>
+              <select id="inputPlatform">
+                <option>Gojek</option><option>Grab</option><option>Maxim</option><option>ShopeeFood</option><option>Indrive</option><option value="Lainnya">Lainnya / Non-App</option>
+              </select>
+            </div>
+            <div><label for="inputTrips">Jumlah Order / Trip</label><input type="number" id="inputTrips" min="0" step="1" placeholder="Contoh: 12"></div>
+          </div>
+
+          <label for="inputGross">Omset Kotor (Rp)</label>
+          <input type="number" id="inputGross" min="0" step="1" placeholder="0" required>
+
+          <fieldset>
+            <legend>Biaya Operasional</legend>
+            <div class="two-col">
+              <div><label for="inputFuel">Bensin (Rp)</label><input type="number" id="inputFuel" min="0" step="1" value="40000"></div>
+              <div><label for="inputOtherExp">Makan & Parkir (Rp)</label><input type="number" id="inputOtherExp" min="0" step="1" value="0"></div>
+            </div>
+            <div class="two-col">
+              <div><label for="inputTaxRate">Potongan Aplikasi (%)</label><input type="number" id="inputTaxRate" min="0" max="100" step="0.1" value="15"></div>
+              <div><label for="inputMaintRate">Tabungan Servis (%)</label><input type="number" id="inputMaintRate" min="0" max="100" step="0.1" value="5"></div>
+            </div>
+          </fieldset>
+
+          <div class="calculation">
+            <div><span>Potongan aplikasi:</span><strong id="calcTax" class="negative">-Rp 0</strong></div>
+            <div><span>Alokasi servis motor:</span><strong id="calcMaint" class="warning">-Rp 0</strong></div>
+            <div class="net-row"><span>Estimasi bersih:</span><strong id="calcNet">Rp 0</strong></div>
+          </div>
+
+          <label for="inputNotes">Catatan (opsional)</label>
+          <input type="text" id="inputNotes" maxlength="500" placeholder="Contoh: Hujan deras jam 2 siang">
+          <button type="submit" class="primary-btn">▣ Simpan Catatan</button>
+          <p class="hint">ⓘ Data tersimpan otomatis di browser/perangkat ini. Hapus satu per satu dari riwayat jika diperlukan.</p>
+        </form>
+      </section>
+
+      <section class="right-column">
+        <section class="panel">
+          <h2 class="panel-title">↗ Tren 7 Hari Terakhir</h2>
+          <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+        </section>
+
+        <section class="panel history-panel">
+          <div class="section-heading history-heading">
+            <h2>☷ Riwayat Pendapatan</h2>
+            <button id="exportCsvBtn" class="secondary-btn">⇩ Export CSV</button>
+          </div>
+          <div class="filter-grid">
+            <select id="filterPlatform" aria-label="Filter platform">
+              <option value="ALL">Semua Platform</option><option>Gojek</option><option>Grab</option><option>Maxim</option><option>ShopeeFood</option><option>Indrive</option><option value="Lainnya">Lainnya</option>
+            </select>
+            <select id="filterMonth" aria-label="Filter bulan"><option value="ALL">Semua Bulan</option></select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Tanggal</th><th>App</th><th class="right">Kotor</th><th class="right">Biaya</th><th class="right">Bersih</th><th class="center">Aksi</th></tr></thead>
+              <tbody id="historyTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <div id="settingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal-card">
+      <div class="section-heading modal-heading"><h2 id="settingsTitle">☷ Pengaturan Default</h2><button id="closeSettingsBtn" class="icon-btn dark-icon" aria-label="Tutup">×</button></div>
+      <label for="settingTarget">Target bersih harian (Rp)</label><input type="number" id="settingTarget" min="1">
+      <label for="settingDefaultFuel">Default bensin (Rp)</label><input type="number" id="settingDefaultFuel" min="0">
+      <label for="settingDefaultTax">Default potongan aplikasi (%)</label><input type="number" id="settingDefaultTax" min="0" max="100" step="0.1">
+      <label for="settingDefaultMaint">Default tabungan servis (%)</label><input type="number" id="settingDefaultMaint" min="0" max="100" step="0.1">
+      <button id="saveSettingsBtn" class="primary-btn">Simpan Pengaturan</button>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
